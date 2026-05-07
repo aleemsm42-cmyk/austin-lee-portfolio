@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data to Dialogue — Austin Lee</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    color: #1a1a2e;
+    background: #f7f5f0;
+    line-height: 1.7;
+  }
+
+  /* ---------- SITE NAV (shared across all pages) ---------- */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15, 28, 63, 0.98);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(200, 169, 110, 0.15);
+  }
+  .site-nav-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .site-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: #f7f5f0;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .site-brand em {
+    font-style: italic;
+    color: #c8a96e;
+  }
+  .site-nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-nav-links a {
+    color: rgba(247, 245, 240, 0.7);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .site-nav-links a:hover,
+  .site-nav-links a.current {
+    color: #c8a96e;
+  }
+  .site-nav-links a.current {
+    position: relative;
+  }
+  .site-nav-links a.current::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -18px;
+    height: 1px;
+    background: #c8a96e;
+  }
+  @media (max-width: 560px) {
+    .site-nav-inner { padding: 12px 20px; gap: 16px; }
+    .site-nav-links { gap: 18px; }
+    .site-nav-links a { font-size: 12px; }
+    .site-brand { font-size: 13px; }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    background: linear-gradient(135deg, #0f1c3f 0%, #1a2847 100%);
+    color: #f7f5f0;
+    padding: 60px 48px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 1px solid rgba(247,245,240,0.08);
+  }
+
+  .hero-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #c8a96e;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    color: #f7f5f0;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: #c8a96e;
+  }
+
+  .hero-statement {
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(247,245,240,0.8);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  .hero-impact {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: rgba(200, 169, 110, 0.12);
+    border: 1px solid rgba(200, 169, 110, 0.3);
+    border-radius: 8px;
+    font-size: 15px;
+    color: #c8a96e;
+    font-weight: 500;
+  }
+
+  .hero-impact-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: #c8a96e;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  section {
+    padding: 64px 0;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #c8a96e;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 400;
+    line-height: 1.2;
+    color: #0f1c3f;
+    margin-bottom: 20px;
+  }
+
+  h2 em {
+    font-style: italic;
+    color: #c8a96e;
+  }
+
+  .lead {
+    font-size: 17px;
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  /* ---------- RESOURCES GRID ---------- */
+  .resources-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  @media (max-width: 680px) {
+    .resources-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .resource-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.2s;
+  }
+
+  .resource-card:hover {
+    border-color: #c8a96e;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .resource-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0f1c3f;
+    margin-bottom: 12px;
+  }
+
+  .resource-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
+  }
+
+  .resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #c8a96e;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: gap 0.2s;
+  }
+
+  .resource-link:hover {
+    gap: 12px;
+  }
+
+  .resource-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ---------- PROMPT BOX ---------- */
+  .prompt-box-wrapper {
+    margin-top: 32px;
+  }
+
+  .prompt-box {
+    background: #0f1c3f;
+    border: 1px solid rgba(200, 169, 110, 0.3);
+    border-radius: 12px;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .prompt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: rgba(200, 169, 110, 0.1);
+    border-bottom: 1px solid rgba(200, 169, 110, 0.2);
+  }
+
+  .prompt-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #c8a96e;
+    letter-spacing: 0.05em;
+  }
+
+  .copy-btn {
+    background: #c8a96e;
+    color: #0f1c3f;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .copy-btn:hover {
+    background: #d4b87e;
+    transform: translateY(-1px);
+  }
+
+  .copy-btn:active {
+    transform: translateY(0);
+  }
+
+  .copy-btn.copied {
+    background: #4a9d5f;
+    color: white;
+  }
+
+  .prompt-content {
+    padding: 20px;
+    max-height: 320px;
+    overflow-y: auto;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: rgba(247, 245, 240, 0.9);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .prompt-content::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .prompt-content::-webkit-scrollbar-track {
+    background: rgba(200, 169, 110, 0.1);
+  }
+
+  .prompt-content::-webkit-scrollbar-thumb {
+    background: rgba(200, 169, 110, 0.4);
+    border-radius: 4px;
+  }
+
+  .prompt-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(200, 169, 110, 0.6);
+  }
+
+  /* ---------- SCREENSHOT SECTION ---------- */
+  .screenshot-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 32px;
+  }
+
+  .screenshot-item {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .screenshot-item h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f1c3f;
+    margin-bottom: 12px;
+  }
+
+  .screenshot-item p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
+  }
+
+  .screenshot-placeholder {
+    background: #f5f5f5;
+    border: 2px dashed #d0d0d0;
+    border-radius: 8px;
+    padding: 48px 24px;
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+  }
+
+  .screenshot-placeholder.has-image {
+    padding: 0;
+    border: 1px solid #e5e5e5;
+    overflow: hidden;
+  }
+
+  .screenshot-placeholder img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .how-step {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: #c8a96e;
+    color: #0f1c3f;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .step-content h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f1c3f;
+    margin-bottom: 8px;
+  }
+
+  .step-content p {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.7;
+  }
+
+  /* ---------- CTA SECTION ---------- */
+  .cta-section {
+    background: linear-gradient(135deg, #0f1c3f 0%, #1a2847 100%);
+    color: #f7f5f0;
+    padding: 56px 48px;
+    border-radius: 16px;
+    margin-top: 64px;
+    margin-bottom: 80px;
+    text-align: center;
+  }
+
+  .cta-section h2 {
+    color: #f7f5f0;
+    margin-bottom: 16px;
+  }
+
+  .cta-section h2 em {
+    color: #c8a96e;
+  }
+
+  .cta-section p {
+    font-size: 16px;
+    color: rgba(247, 245, 240, 0.8);
+    margin-bottom: 32px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s;
+  }
+
+  .cta-btn-primary {
+    background: #c8a96e;
+    color: #0f1c3f;
+  }
+
+  .cta-btn-primary:hover {
+    background: #d4b87e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(200, 169, 110, 0.3);
+  }
+
+  .cta-btn-secondary {
+    background: transparent;
+    color: #f7f5f0;
+    border: 1px solid rgba(247, 245, 240, 0.3);
+  }
+
+  .cta-btn-secondary:hover {
+    background: rgba(247, 245, 240, 0.1);
+    border-color: rgba(247, 245, 240, 0.5);
+  }
+
+  /* ---------- DIVIDER ---------- */
+  .divider-line {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #d0d0d0, transparent);
+    margin: 56px 0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 48px 32px;
+    color: #888;
+    font-size: 14px;
+    background: #0f1c3f;
+    color: rgba(247, 245, 240, 0.6);
+  }
+
+  footer a {
+    color: #c8a96e;
+    text-decoration: none;
+  }
+
+  footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="index.html" class="site-brand">Austin <em>Lee</em></a>
+    <ul class="site-nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="data-dialogue.html" class="current">Data to Dialogue</a></li>
+      <li><a href="playbook.html">LIFT Playbook</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <p class="hero-label">AI-Enhanced Student Feedback</p>
+    <h1>Data to <em>Dialogue</em></h1>
+    <p class="hero-statement">Turn raw assessment data into personalized, actionable feedback for every student — instantly. A custom Google Sheets formula system that scales individual responses across hundreds of students in seconds.</p>
+    <div class="hero-impact">
+      <span class="hero-impact-num">3 min</span>
+      <span>to generate feedback for an entire grade level</span>
+    </div>
+  </div>
+</div>
+
+<div style="background: #f7f5f0;">
+
+  <div class="container">
+
+    <section>
+      <p class="section-label">Get everything you need</p>
+      <h2>Three resources to <em>get started</em></h2>
+      <p class="lead">Everything you need to implement this system is right here — the AI prompt, the presentation walkthrough, and visual examples of how it works.</p>
+
+      <div class="resources-grid">
+        <div class="resource-card">
+          <h3>📊 Live Presentation</h3>
+          <p>Full walkthrough of the system including why it matters, what it does, and how to implement it on your campus.</p>
+          <a href="https://docs.google.com/presentation/d/1mvLZ2fUKwjpZiHGIvMqVPua2OCNbY3szSl_VKmQWAEU/copy" target="_blank" class="resource-link">
+            View presentation
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+        </div>
+
+        <div class="resource-card">
+          <h3>📋 Sample Data Sheet</h3>
+          <p>See a working example with sample student data showing where formulas go and what the output looks like.</p>
+          <a href="https://docs.google.com/spreadsheets/d/11YbcbaWBFMEeSdCpWCfA3fElAFHxMfz1_bE8wuP7qnM/copy" target="_blank" class="resource-link">
+            View sample sheet
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="prompt-box-wrapper">
+        <div class="prompt-box">
+          <div class="prompt-header">
+            <span class="prompt-title">AI PROMPT — Copy and paste into Claude or ChatGPT</span>
+            <button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
+          </div>
+          <div class="prompt-content" id="promptContent">PROMPT:
+You are a Google Sheets formula builder. You will build exactly TWO Google Sheets formulas that a teacher pastes into their Google Sheet to automatically generate personalized student feedback messages. These formulas are for GOOGLE SHEETS ONLY — not Excel, not LibreOffice, not any other spreadsheet program.
+
+There are NO settings blocks, NO extra helper columns, NO macros, NO Apps Script. Just two formulas in two cells.
+
+FORMULA 1: HELPER FORMULA
+- Goes in ROW 1 of the output column (e.g., X1)
+- Finds the minimum Raw Score where each performance level (Approaches, Meets, Masters) = "Yes"
+- Calculates total possible points by finding the highest raw score and deriving the total from it
+- Calculates PPQ (points per question) = total possible points ÷ number of questions
+- Converts each raw score cut into a question equivalent by dividing by PPQ and rounding
+- Outputs a single text string: "Cuts: App=XX | Meets=XX | Masters=XX | PPQ=XX" where the cut values are in QUESTION EQUIVALENTS (not raw points) and PPQ is the average points per question
+- This runs once and the main formula reads from it
+
+FORMULA 2: MAIN FEEDBACK FORMULA
+- Goes in the FIRST STUDENT ROW of the same output column (e.g., X7)
+- Uses MAP + LAMBDA to spill down automatically — teacher pastes it ONCE and it fills every student row
+- Reads the cut scores from the helper cell above — does NOT recalculate them per student
+- Reads the student's actual percentage from the Percent Score column already in the sheet — does NOT recalculate it from raw scores
+- Reads the student's Raw Score from the Raw Score column already in the sheet
+- Generates one feedback string per student
+
+=========================================================================
+BEFORE YOU BUILD ANYTHING — YOU MUST ASK THESE QUESTIONS AND WAIT FOR ANSWERS
+=========================================================================
+
+Do NOT skip any question. Do NOT assume any answer. Ask all of them, wait for the teacher's response, THEN build the formulas. If the teacher says "use defaults" for a question, use the default shown in parentheses. Questions 4, 6, and 7 have NO defaults — you must get an answer.
+
+DATA LAYOUT QUESTIONS:
+1. What are your header rows? (default: rows 1–6)
+2. What row is your first student? (default: row 7)
+3. What column do your questions start in? (default: G)
+4. What column is your LAST question in? (NO DEFAULT — ask every time)
+5. Is there a student name in column A? (default: Yes)
+6. What column will you paste the formula into? (NO DEFAULT — ask every time. Example: X. This is critical — all INDIRECT ranges must stop ONE column before this to prevent circular dependency errors.)
+7. What is your last student row number? (NO DEFAULT — ask every time. Example: 192. This sets the MAP range like A7:A192.)
+
+GRADING QUESTIONS:
+8. Grading method — Scaled bands or just Rounded percentage? (default: Scaled)
+   If Scaled, use these bands unless the teacher changes them:
+   0–16 → 50, 17–34 → 60, 35–45 → 70, 46–55 → 75, 56–66 → 80, 67–77 → 85, 78–89 → 90, 90–96 → 95, 97–100 → 100
+9. Curve method — None, SquareRoot, or AddPoints? (default: SquareRoot)
+   - If None: gradebook = scaled grade, no curve applied
+   - If SquareRoot: gradebook = ROUND(100 * SQRT(scaledGrade / 100), 0)
+   - If AddPoints: gradebook = scaledGrade + points. Ask: how many points to add? (default: 0)
+10. Cap the final grade at 100? (default: Yes)
+
+CORRECTIONS QUESTIONS:
+11. What percentage threshold triggers mandatory vs optional corrections? (default: 70%)
+    - Below threshold = "You MUST do corrections"
+    - At or above threshold but below 100% = "You MAY do corrections"
+12. How should students submit corrections? (default: A = Paper)
+    A = "turning this in on paper with all your work shown"
+    C = "looking in Canvas for the test questions to correct"
+    E = "emailing your corrections to your teacher"
+13. How many school days for corrections? (default: 3)
+    Do NOT calculate calendar dates. Do NOT embed holiday calendars. Just say "within X school days."
+
+OUTPUT QUESTIONS:
+14. Should a 100% Masters student get a celebratory message with no corrections info? (default: Yes)
+15. Should the message include both the actual percentage AND the curved gradebook grade? (default: Yes)
+
+=========================================================================
+SHEET LAYOUT — THE FORMULAS MUST DETECT AND ADAPT TO THIS
+=========================================================================
+
+The teacher's Google Sheet from Eduphoria has this structure:
+- Rows 1–6 are headers (or whatever the teacher specifies)
+- Row 2 contains column headers for all data columns
+- Row 3 has question numbers (1, 2, 3, ...)
+- Row 4 has question types. Possible values:
+  * "Correct/Incorrect" — worth 1 point, scored by + prefix
+  * "Partial (0-1-2)" — partial credit, scored by fraction like 1/2
+  * "0 - 1 - 2" — same as above, alternate label
+  * "Point per Task" — same as above, another alternate label
+- Row 5 has reporting category codes
+- Row 6 has TEKS codes per question
+- Student data starts at the row the teacher specified
+
+COLUMNS AFTER THE LAST QUESTION (found by MATCH against row 2, never hardcoded):
+- "Raw Score" — always present, whole number of points earned
+- "Scale Score" — MAY OR MAY NOT exist, formula must handle both
+- "Percent Score" — always present, may be formatted as "85.71%" text or 0.8571 decimal
+- "Approaches Grade Level (TX)" or just "Approaches" — contains "Yes" or "No"
+- "Meets Grade Level (TX)" or just "Meets" — contains "Yes" or "No"
+- "Masters Grade Level (TX)" or just "Masters" — contains "Yes" or "No"
+
+Use IFERROR fallbacks for ALL header matches:
+  IFERROR(MATCH("Approaches Grade Level (TX)", hdr, 0), MATCH("Approaches", hdr, 0))
+  Same pattern for Meets, Masters, Percent Score/Percent.
+
+=========================================================================
+GOOGLE SHEETS ARCHITECTURE RULES — DO NOT VIOLATE THESE
+=========================================================================
+
+These rules are based on extensive testing. Violating them causes #REF!, circular dependency, or argument errors in Google Sheets.
+
+1. ALL INDIRECT RANGES MUST STOP ONE COLUMN BEFORE THE OUTPUT COLUMN.
+   If the formula is in column X, every INDIRECT must cap at column W.
+   Example: INDIRECT("A"&r&":W"&r) — NOT INDIRECT("A"&r&":BZ"&r)
+   This prevents circular dependency because the formula's spill output would be inside the range it reads.
+
+2. DO NOT DEFINE LAMBDA VARIABLES INSIDE LET.
+   This causes #REF! errors in Google Sheets:
+   BAD:  isPart, LAMBDA(qt, OR(ISNUMBER(SEARCH("Partial",qt)),...))
+   GOOD: Inline the OR(...) logic directly where needed.
+
+3. EVERY LET VARIABLE MUST BE USED.
+   Google Sheets throws "not a valid name" errors if you define a variable in LET but never reference it.
+
+4. USE BYCOL FOR COLUMN ITERATION.
+   BYCOL(SEQUENCE(1, numQs), LAMBDA(col, ...)) is proven to work in Google Sheets for iterating over question columns.
+
+5. USE TO_TEXT() FOR STRING CONVERSION.
+   Do NOT use TEXT(cell, "@"). Use TO_TEXT(cell) instead.
+
+6. USE LOOKUP FOR SCALED GRADE BANDS.
+   LOOKUP(actualPct, {0,17,35,46,56,67,78,90,97}, {50,60,70,75,80,85,90,95,100})
+   Do NOT use IFS — LOOKUP is cleaner and proven.
+
+7. USE DIRECT CELL REFERENCES FOR STATIC ROWS.
+   Rows that never change (like row 3 question numbers, row 4 question types) should use direct references like G3:R3, NOT INDIRECT("G3:R3").
+
+8. USE INDIRECT ONLY FOR DYNAMIC ROW REFERENCES.
+   INDIRECT("G"&r&":R"&r) is correct for the current student's row.
+
+9. USE $A$2:$W$2 WITH ABSOLUTE REFERENCES FOR THE HEADER ROW.
+   This prevents the reference from shifting.
+
+10. MAP RANGE MUST BE BOUNDED.
+    Use INDIRECT("A7:A192"), NOT INDIRECT("A7:A"). Open-ended ranges cause circular dependency with spill.
+
+=========================================================================
+SCORING RULES FOR THE MISSED QUESTIONS LIST
+=========================================================================
+
+THE "+" PREFIX IS THE UNIVERSAL SOURCE OF TRUTH.
+Eduphoria places a "+" at the beginning of every correct answer cell, regardless of question type. This is the primary logic for all scoring. Check for "+" FIRST, ALWAYS.
+
+- A blank cell, "-", or " - " = omitted/skipped — EXCLUDE entirely (use -1 as sentinel value)
+- A cell starting with "+" = CORRECT
+- A cell NOT starting with "+" (and not blank/dash) = INCORRECT
+
+This applies to ALL question types — Correct/Incorrect, Partial, Point per Task, everything.
+
+For Correct/Incorrect questions (row 4 says "Correct/Incorrect"):
+- "+" prefix = 1 earned, 1 possible
+- No "+" = 0 earned, 1 possible
+
+For Partial credit questions (row 4 contains "Partial", "0-1-2", "0 - 1 - 2", or "Point per Task"):
+- FIRST check for "+" prefix — this determines correct vs incorrect
+- THEN check if the cell contains a "/" character
+- If YES (has "/"): Parse the fraction to determine HOW MUCH credit (e.g., 1/2 = partial). The fraction parsing determines whether to tag as "(partial)" in the missed list. If parsing fails, fall back to the "+" check (has + = 1 earned, no + = 0 earned).
+- If NO (no "/"): Use the "+" prefix only. Has "+" = 1 earned, no "+" = 0 earned. Possible = 1.
+- CRITICAL: The "+" prefix always wins. Never assume correct without "+". Never assume incorrect when "+" is present.
+
+Missed list format:
+- Zero credit on any question: "Q10"
+- Partial credit (some but not full, determined by fraction parsing): "Q4 (partial)"
+- Include question count in parentheses: "(8 questions)"
+
+=========================================================================
+WHAT TO READ VS WHAT TO CALCULATE
+=========================================================================
+
+READ DIRECTLY FROM THE SHEET (do not recalculate):
+- actualPct: From the Percent Score column. Strip "%" if present. If value < 1, multiply by 100. ROUND to whole number.
+- studentRaw: From the Raw Score column. Whole number.
+- Performance level columns: Approaches/Meets/Masters Yes/No values.
+- Cut scores: From the helper formula cell (parsed from text string). These are already in question equivalents.
+- PPQ (points per question): From the helper formula cell (parsed from text string).
+
+CALCULATE IN THE FORMULA:
+- perfLevel: Derived from Yes/No columns (Masters → Meets → Approaches → Did Not Meet)
+- scaledGrade: From actualPct using LOOKUP band table
+- curvedGrade: From scaledGrade using specified curve method
+- finalGrade: curvedGrade capped at 100 if specified, rounded
+- earnedVec / possVec: Per-question points by parsing answer cells (for missed list only)
+- missedList: Which questions were missed, with partial tags
+- missedCount: How many questions missed
+- studentQs: Student's raw score converted to question equivalents (studentRaw / ppq, rounded)
+- questionsAway: nextLevelCut − studentQs (minimum 0), both already in question equivalents
+- corrMsg: Mandatory vs optional based on threshold
+
+=========================================================================
+PERFORMANCE LEVEL LOGIC
+=========================================================================
+
+- Masters = Masters column is "Yes"
+- Meets = Meets column is "Yes" AND Masters is "No"
+- Approaches = Approaches column is "Yes" AND Meets is "No"
+- Did Not Meet = all three columns are "No"
+
+QUESTIONS AWAY FROM NEXT LEVEL:
+- Did Not Meet → next level is Approaches
+- Approaches → next level is Meets
+- Meets → next level is Masters
+- Masters → no next level, questionsAway = 0
+- The helper formula provides cut scores already converted to question equivalents and a PPQ value
+- The main formula converts the student's raw score to question equivalents: studentQs = ROUND(studentRaw / ppq, 0)
+- questionsAway = MAX(0, nextLevelCutInQuestions − studentQs)
+- This gives students a tangible number ("5 questions away") instead of abstract points ("27 points away")
+- It is approximate because questions have different point values, but it is meaningful and actionable for students
+
+=========================================================================
+OUTPUT STRING FORMAT
+=========================================================================
+
+For 100% Masters students:
+[Name] | Current Level: Masters | Outstanding work! Your actual score is 100%. After the curve, your gradebook grade is 100. No corrections needed!
+
+For Masters students below 100%:
+[Name] | Missed: Q13 (1 questions) | Current Level: Masters | Outstanding work! Your actual score is 95%. After the curve, your gradebook grade is 100. You may do corrections if you wish.
+
+For all other students:
+[Name] | Missed: Q3, Q7, Q11 (partial) (8 questions) | Current Level: Approaches | You are 4 questions away from Meets. | Your actual score is 45%. After the curve, your gradebook grade is 75. | You MUST do corrections by turning this in on paper with all your work shown within 3 school days.
+
+Corrections message:
+- Below threshold: "You MUST do corrections by [method text] within [X] school days."
+- At or above threshold but below 100%: "You MAY do corrections by [method text] within [X] school days."
+- At 100%: no corrections message.
+- NEVER calculate a calendar date. Just state the number of school days.
+
+Skip logic:
+- If column A is blank for a row → output ""
+- If any answer cell in the row contains "Skipped" → output ""
+
+=========================================================================
+PROVEN WORKING EXAMPLE — USE THIS AS YOUR TEMPLATE
+=========================================================================
+
+This formula pair has been tested and verified working in Google Sheets. Use it as your structural template. Adapt the column ranges, row ranges, curve method, threshold, and corrections method based on the teacher's answers. Do NOT change the architecture patterns.
+
+HELPER FORMULA (paste in X1):
+
+=LET(
+  hdr,$A$2:$W$2,
+  pctCol,IFERROR(MATCH("Percent Score",hdr,0),MATCH("Percent",hdr,0)),
+  rawCol,MATCH("Raw Score",hdr,0),
+  appCol,IFERROR(MATCH("Approaches Grade Level (TX)",hdr,0),MATCH("Approaches",hdr,0)),
+  meetsCol,IFERROR(MATCH("Meets Grade Level (TX)",hdr,0),MATCH("Meets",hdr,0)),
+  mastersCol,IFERROR(MATCH("Masters Grade Level (TX)",hdr,0),MATCH("Masters",hdr,0)),
+  allData,INDIRECT("A7:W1000"),
+  allRaw,INDEX(allData,,rawCol),
+  allPct,INDEX(allData,,pctCol),
+  allApp,INDEX(allData,,appCol),
+  allMeets,INDEX(allData,,meetsCol),
+  allMasters,INDEX(allData,,mastersCol),
+  maxRaw,MAX(allRaw),
+  totalPoss,IFERROR(ROUND(maxRaw/MAX(SUBSTITUTE(TO_TEXT(INDEX(allData,MATCH(maxRaw,allRaw,0),pctCol)),"%","")*IF(SUBSTITUTE(TO_TEXT(INDEX(allData,MATCH(maxRaw,allRaw,0),pctCol)),"%","")<1,100,1)/100),0),maxRaw),
+  numQs,COLUMNS(G3:R3),
+  ppq,ROUND(totalPoss/numQs,1),
+  appCutRaw,IFERROR(MINIFS(allRaw,allApp,"Yes",allRaw,">"&0),0),
+  meetsCutRaw,IFERROR(MINIFS(allRaw,allMeets,"Yes",allRaw,">"&0),0),
+  mastersCutRaw,IFERROR(MINIFS(allRaw,allMasters,"Yes",allRaw,">"&0),0),
+  appCutQ,ROUND(appCutRaw/ppq,0),
+  meetsCutQ,ROUND(meetsCutRaw/ppq,0),
+  mastersCutQ,ROUND(mastersCutRaw/ppq,0),
+  "Cuts: App="&appCutQ&" | Meets="&meetsCutQ&" | Masters="&mastersCutQ&" | PPQ="&ppq
+)
+
+MAIN FEEDBACK FORMULA (paste in X7):
+
+=MAP(INDIRECT("A7:A192"),LAMBDA(nameCell,
+IF(OR(nameCell="",ISNUMBER(SEARCH("Skipped",TEXTJOIN(" ",TRUE,INDIRECT("G"&ROW(nameCell)&":R"&ROW(nameCell)))))),"",
+LET(
+  r,ROW(nameCell),
+  corrThreshold,70,
+  capAt100,TRUE,
+  schoolDays,3,
+
+  qNums,G3:R3,
+  qTypes,G4:R4,
+  qRange,INDIRECT("G"&r&":R"&r),
+  numQs,COLUMNS(qRange),
+
+  hdr,$A$2:$W$2,
+  pctCol,IFERROR(MATCH("Percent Score",hdr,0),MATCH("Percent",hdr,0)),
+  rawCol,MATCH("Raw Score",hdr,0),
+  appCol,IFERROR(MATCH("Approaches Grade Level (TX)",hdr,0),MATCH("Approaches",hdr,0)),
+  meetsCol,IFERROR(MATCH("Meets Grade Level (TX)",hdr,0),MATCH("Meets",hdr,0)),
+  mastersCol,IFERROR(MATCH("Masters Grade Level (TX)",hdr,0),MATCH("Masters",hdr,0)),
+
+  cutText,TO_TEXT($X$1),
+  appCut,VALUE(MID(cutText,SEARCH("App=",cutText)+4,SEARCH(" |",cutText)-SEARCH("App=",cutText)-4)),
+  meetsCut,VALUE(MID(cutText,SEARCH("Meets=",cutText)+6,SEARCH(" | Masters",cutText)-SEARCH("Meets=",cutText)-6)),
+  mastersCut,VALUE(MID(cutText,SEARCH("Masters=",cutText)+8,SEARCH(" | PPQ",cutText)-SEARCH("Masters=",cutText)-8)),
+  ppq,VALUE(MID(cutText,SEARCH("PPQ=",cutText)+4,LEN(cutText)-SEARCH("PPQ=",cutText)-3)),
+
+  rowData,INDIRECT("A"&r&":W"&r),
+  rawPctText,TO_TEXT(INDEX(rowData,1,pctCol)),
+  actualPct,ROUND(IF(VALUE(SUBSTITUTE(rawPctText,"%",""))<1,VALUE(SUBSTITUTE(rawPctText,"%",""))*100,VALUE(SUBSTITUTE(rawPctText,"%",""))),0),
+  studentRaw,INDEX(rowData,1,rawCol),
+  appVal,INDEX(rowData,1,appCol),
+  meetsVal,INDEX(rowData,1,meetsCol),
+  mastersVal,INDEX(rowData,1,mastersCol),
+
+  perfLevel,IF(mastersVal="Yes","Masters",IF(meetsVal="Yes","Meets",IF(appVal="Yes","Approaches","Did Not Meet"))),
+
+  earnedVec,BYCOL(SEQUENCE(1,numQs),LAMBDA(col,
+    LET(
+      cell,INDEX(qRange,1,col),
+      qtype,TO_TEXT(INDEX(qTypes,1,col)),
+      isPart,OR(ISNUMBER(SEARCH("Partial",qtype)),ISNUMBER(SEARCH("0-1-2",qtype)),ISNUMBER(SEARCH("0 - 1 - 2",qtype)),ISNUMBER(SEARCH("Point per Task",qtype))),
+      t,TO_TEXT(cell),
+      hasPlus,LEFT(t,1)="+",
+      hasSlash,ISNUMBER(SEARCH("/",t)),
+      IF(OR(t="",t="-",t=" - "),-1,
+        IF(AND(isPart,hasSlash),
+          IFERROR(LET(sp,SEARCH("/",t),c1,MID(t,MAX(sp-1,1),1),c2,IF(sp>2,MID(t,sp-2,1),"x"),IF(ISNUMBER(--c2),VALUE(c2&c1),VALUE(c1))),IF(hasPlus,1,0)),
+          IF(hasPlus,1,0)
+        )
+      )
+    )
+  )),
+
+  possVec,BYCOL(SEQUENCE(1,numQs),LAMBDA(col,
+    LET(
+      cell,INDEX(qRange,1,col),
+      qtype,TO_TEXT(INDEX(qTypes,1,col)),
+      isPart,OR(ISNUMBER(SEARCH("Partial",qtype)),ISNUMBER(SEARCH("0-1-2",qtype)),ISNUMBER(SEARCH("0 - 1 - 2",qtype)),ISNUMBER(SEARCH("Point per Task",qtype))),
+      t,TO_TEXT(cell),
+      hasSlash,ISNUMBER(SEARCH("/",t)),
+      IF(OR(t="",t="-",t=" - "),-1,
+        IF(AND(isPart,hasSlash),
+          IFERROR(LET(sp,SEARCH("/",t),d1,MID(t,sp+1,1),d2,IF(LEN(t)>=sp+2,MID(t,sp+2,1),"x"),IF(ISNUMBER(--d2),VALUE(d1&d2),VALUE(d1))),1),
+          1
+        )
+      )
+    )
+  )),
+
+  scaledGrade,LOOKUP(actualPct,{0,17,35,46,56,67,78,90,97},{50,60,70,75,80,85,90,95,100}),
+  curvedGrade,ROUND(100*SQRT(scaledGrade/100),0),
+  finalGrade,ROUND(IF(capAt100,MIN(curvedGrade,100),curvedGrade),0),
+
+  missedList,TEXTJOIN(", ",TRUE,BYCOL(SEQUENCE(1,numQs),LAMBDA(col,
+    LET(
+      cell,INDEX(qRange,1,col),
+      qtype,TO_TEXT(INDEX(qTypes,1,col)),
+      qnum,INDEX(qNums,1,col),
+      earned,INDEX(earnedVec,1,col),
+      poss,INDEX(possVec,1,col),
+      t,TO_TEXT(cell),
+      isPart,OR(ISNUMBER(SEARCH("Partial",qtype)),ISNUMBER(SEARCH("0-1-2",qtype)),ISNUMBER(SEARCH("0 - 1 - 2",qtype)),ISNUMBER(SEARCH("Point per Task",qtype))),
+      IF(OR(t="",t="-",t=" - "),"",
+        IF(AND(earned>=0,poss>0,earned<poss),
+          IF(AND(earned>0,isPart),"Q"&qnum&" (partial)","Q"&qnum),
+          ""
+        )
+      )
+    )
+  ))),
+
+  missedCount,SUMPRODUCT(IF(earnedVec>=0,IF(possVec>0,IF(earnedVec<possVec,1,0),0),0)),
+  missedDisplay,IF(missedList="","None",missedList),
+
+  nextLevel,IF(perfLevel="Did Not Meet","Approaches",IF(perfLevel="Approaches","Meets",IF(perfLevel="Meets","Masters","none"))),
+  nextCut,IF(nextLevel="Approaches",appCut,IF(nextLevel="Meets",meetsCut,IF(nextLevel="Masters",mastersCut,0))),
+  studentQs,ROUND(studentRaw/ppq,0),
+  questionsAway,IF(nextLevel="none",0,MAX(0,nextCut-studentQs)),
+
+  corrMsg,IF(actualPct<corrThreshold,
+    "You MUST do corrections by turning this in on paper with all your work shown within "&schoolDays&" school days.",
+    IF(actualPct<100,
+      "You MAY do corrections by turning this in on paper with all your work shown within "&schoolDays&" school days.",
+      ""
+    )
+  ),
+
+  gradeMsg,"Your actual score is "&actualPct&"%. After the curve, your gradebook grade is "&finalGrade&".",
+
+  IF(AND(actualPct>=100,perfLevel="Masters"),
+    nameCell&" | Current Level: Masters | Outstanding work! "&gradeMsg&" No corrections needed!",
+    IF(AND(perfLevel="Masters",actualPct<100),
+      nameCell&" | Missed: "&missedDisplay&" ("&missedCount&" questions) | Current Level: Masters | Outstanding work! "&gradeMsg&" You may do corrections if you wish.",
+      nameCell&" | Missed: "&missedDisplay&" ("&missedCount&" questions) | Current Level: "&perfLevel&" | You are "&questionsAway&" questions away from "&nextLevel&". | "&gradeMsg&" | "&corrMsg
+    )
+  )
+)
+)
+))
+
+=========================================================================
+WHAT TO CHANGE IN THE EXAMPLE BASED ON TEACHER'S ANSWERS
+=========================================================================
+
+When adapting the example above, change ONLY these parts:
+
+HELPER FORMULA:
+- $A$2:$W$2 → change W to one column before the output column
+- INDIRECT("A7:W1000") → change 7 to the first student row, change W to one column before output
+- COLUMNS(G3:R3) → change G and R to match question start/end columns (this counts questions for PPQ calculation)
+
+MAIN FORMULA:
+- INDIRECT("A7:A192") → change 7 to first student row, 192 to last student row
+- "G"&ROW(nameCell)&":R"&ROW(nameCell) in the Skipped check → change G and R to question start/end columns
+- G3:R3 and G4:R4 → change to match question start/end columns
+- INDIRECT("G"&r&":R"&r) → change G and R to question start/end columns
+- $A$2:$W$2 → change W to one column before the output column
+- $X$1 → change X to the actual output column
+- INDIRECT("A"&r&":W"&r) → change W to one column before the output column
+- corrThreshold,70 → change to the teacher's threshold
+- schoolDays,3 → change to the teacher's school days
+- The corrections method text → change based on A/C/E answer
+- The curvedGrade line → change based on None/SquareRoot/AddPoints answer:
+  * None: curvedGrade,scaledGrade
+  * SquareRoot: curvedGrade,ROUND(100*SQRT(scaledGrade/100),0)
+  * AddPoints: curvedGrade,scaledGrade+20 (replace 20 with the teacher's number)
+
+=========================================================================
+MANDATORY SELF-CHECK — RUN ALL BEFORE OUTPUTTING
+=========================================================================
+
+1. Did you ask all 15 questions and wait for answers? If no, STOP and ask.
+2. Are there exactly TWO formulas — one helper in row 1, one main in the first student row? If no, fix.
+3. Do all INDIRECT ranges stop ONE COLUMN BEFORE the output column? If any go past, fix. This prevents circular dependency.
+4. Does the helper find Raw Score cuts, calculate total possible points, derive PPQ, and convert cuts to question equivalents? If it outputs raw points instead of question equivalents, fix.
+5. Does the helper output "Cuts: App=XX | Meets=XX | Masters=XX | PPQ=XX" with question-equivalent cut values? If missing PPQ, fix.
+6. Does the main formula parse PPQ from the helper cell and use it to convert studentRaw to question equivalents? If it subtracts raw scores directly, fix.
+7. Does the main formula read cut scores from the helper cell via string parsing? If it recalculates, fix.
+8. Does the main formula read actualPct from the Percent Score column? If it calculates from raw data, fix.
+9. Does the main formula read studentRaw from the Raw Score column? If not, fix.
+10. Does it handle percent values that might be decimals (multiply by 100 if < 1)? If not, fix.
+11. Are there any LAMBDA variables defined inside LET? If yes, inline them.
+12. Is every LET variable actually used in the formula? If any unused, remove them.
+13. Does it use BYCOL for column iteration? If not, change to BYCOL.
+14. Does it use TO_TEXT() for string conversion? If it uses TEXT(cell,"@"), change.
+15. Does it use LOOKUP for scaled grades? If it uses IFS, change.
+16. Does it handle all header name variants with IFERROR fallbacks? If not, add.
+17. Does it detect all partial credit labels (Partial, 0-1-2, 0 - 1 - 2, Point per Task)? If not, add.
+18. Does it check for "+" prefix as the PRIMARY scoring logic for ALL question types? If not, fix.
+19. For partial credit questions without a "/" in the cell, does it fall back to the "+" check (not assume correct or assume incorrect)? If not, fix.
+20. Does it skip rows with "Skipped"? If not, add.
+21. Is the corrections deadline just "within X school days" with NO date calculation? If it calculates dates, remove.
+22. Is the MAP range bounded (A7:A192) not open-ended (A7:A)? If open-ended, fix.
+23. Would changing just the column letters and row numbers adapt this to a different test? If not, fix.
+
+OUTPUT THE TWO FORMULAS ONLY AFTER PASSING ALL 23 CHECKS.
+Then provide a short checklist:
+- Which cell to paste the helper formula
+- Which cell to paste the main formula
+- How to change settings (threshold, curve, corrections method, school days)</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider-line">
+
+    <section>
+      <p class="section-label">See it in action</p>
+      <h2>What the <em>output</em> looks like</h2>
+      <p class="lead">These screenshots show the personalized feedback generated for each student, and where to place the formulas in your spreadsheet.</p>
+
+      <div class="screenshot-grid">
+        <div class="screenshot-item">
+          <h4>Formula Placement</h4>
+          <p>The helper formula goes in row 1 of your output column (calculates cut scores once). The main formula goes in your first student row and automatically fills down for all students.</p>
+          <div class="screenshot-placeholder has-image">
+            <img src="formula-placement.png" alt="Screenshot showing where to paste the helper formula in row 1 and the main formula in the first student row" />
+          </div>
+        </div>
+
+        <div class="screenshot-item">
+          <h4>Student Feedback Output</h4>
+          <p>Each student receives a personalized message showing which questions they missed, their current performance level, how many questions away they are from the next level, and whether corrections are required or optional.</p>
+          <div class="screenshot-placeholder has-image">
+            <img src="feedback-output.png" alt="Screenshot showing personalized student feedback messages for different performance levels" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider-line">
+
+    <section>
+      <p class="section-label">How it works</p>
+      <h2>The <em>mechanics</em> behind it</h2>
+      <p class="lead">This system uses custom Google Sheets formulas — no macros, no Apps Script, no external tools. Just two formulas that you paste once and they handle everything automatically.</p>
+
+      <div class="how-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Export your assessment data from Eduphoria</h4>
+          <p>Download the standard item analysis report from Eduphoria as a Google Sheet. This includes student names, raw scores, question-by-question responses, and performance levels.</p>
+        </div>
+      </div>
+
+      <div class="how-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Copy the AI prompt and get your custom formulas</h4>
+          <p>Paste the prompt above into Claude or ChatGPT. Answer the questions about your specific data layout (which columns, which rows, grading method, corrections policy). The AI builds two formulas customized to your exact spreadsheet structure.</p>
+        </div>
+      </div>
+
+      <div class="how-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Paste the formulas into your sheet</h4>
+          <p>The helper formula goes in row 1 of your output column (runs once to calculate performance cut scores). The main formula goes in your first student row and automatically fills down to generate personalized feedback for every student.</p>
+        </div>
+      </div>
+
+      <div class="how-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Share feedback with students instantly</h4>
+          <p>Each student sees their current performance level (Masters, Meets, Approaches, or Did Not Meet), which specific questions they missed, how close they are to the next level, and whether corrections are required or optional — all generated automatically in seconds.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider-line">
+
+    <section>
+      <p class="section-label">The impact</p>
+      <h2>Why this <em>matters</em></h2>
+      <p class="lead">Teachers spend hours decoding spreadsheets and manually writing feedback. This system eliminates that entirely — turning raw data into personalized, actionable next steps in minutes instead of hours.</p>
+
+      <p style="margin-top: 24px;">This isn't just about saving time. It's about giving every student the clarity they need to improve. A student who is one question away from the next performance level deserves to know that — and so does their teacher. This system makes that transparency automatic and scalable across an entire grade level.</p>
+
+      <p style="margin-top: 16px;">When teachers can see patterns across hundreds of students instantly, they can make better instructional decisions. When students get specific feedback about which questions to focus on and how close they are to advancing, they're more motivated to do corrections. That's the difference between data sitting in a spreadsheet and data driving real action.</p>
+    </section>
+
+    <div class="cta-section">
+      <h2>Ready to <em>implement</em> this?</h2>
+      <p>I built this system for my campus, I'm presenting it at Region 11's AI event on May 15th, and I can help you bring it to your school or district. Whether you need support implementing this at your campus, want customized professional development for your team, or are looking for someone who builds systems like this at scale — let's talk.</p>
+      <div class="cta-buttons">
+        <a href="contact.html" class="cta-btn cta-btn-primary">Get in Touch</a>
+        <a href="index.html" class="cta-btn cta-btn-secondary">See My Full Work</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <p>Austin Lee · Instructional Coach & Systems Designer</p>
+  <p style="margin-top: 8px;"><a href="contact.html">Contact</a></p>
+</footer>
+
+<script>
+function copyPrompt() {
+  const promptContent = document.getElementById('promptContent');
+  const textToCopy = promptContent.textContent;
+  
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    const originalText = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(err => {
+    console.error('Failed to copy:', err);
+    alert('Failed to copy. Please select and copy manually.');
+  });
+}
+</script>
+
+</body>
+</html>
