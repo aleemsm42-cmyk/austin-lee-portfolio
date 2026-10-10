@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STAAR Analyzer — Free Google Sheets Tool | Austin Lee</title>
+<meta name="description" content="A free Google Sheets tool: import your Eduphoria STAAR export and every teacher gets a tab showing what to reteach, who to pull, and who's close to the next level.">
+<meta property="og:title" content="STAAR Analyzer — free for Texas teachers">
+<meta property="og:description" content="Import your Eduphoria STAAR export, and every teacher gets a tab by class period. Runs inside your district's own Google account.">
+<meta property="og:url" content="https://coachaustinlee.com/staar.html">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1c3f; --gold: #c8a96e; --gold-text: #86602a; --cream: #f7f5f0;
+    --sand: #f0ece4; --line: #e4e0d8; --ink: #1a1a2e; --body: #3a3a4a; --muted: #666666;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; color: var(--ink); background: var(--cream); line-height: 1.7; font-size: 16px; }
+  html { scroll-behavior: smooth; }
+
+  /* ---------- SITE NAV (shared) ---------- */
+  .site-nav { position: sticky; top: 0; z-index: 100; background: rgba(15,28,63,0.98); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(200,169,110,0.15); }
+  .site-nav-inner { max-width: 1080px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .site-brand { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--cream); text-decoration: none; letter-spacing: 0.02em; white-space: nowrap; }
+  .site-brand em { font-style: italic; color: var(--gold); }
+  .site-nav-links { display: flex; gap: 24px; list-style: none; flex-wrap: wrap; justify-content: flex-end; }
+  .site-nav-links a { color: rgba(247,245,240,0.8); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.04em; }
+  .site-nav-links a:hover, .site-nav-links a.current { color: var(--gold); }
+
+  /* ---------- HERO ---------- */
+  .hero { background: var(--navy); color: var(--cream); padding: 56px 0 56px; }
+  .hero-inner { max-width: 1080px; margin: 0 auto; padding: 0 32px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+  .session-chip { display: inline-block; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(200,169,110,0.45); border-radius: 100px; padding: 6px 14px; margin-bottom: 20px; }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(36px, 5.2vw, 54px); font-weight: 400; line-height: 1.08; margin-bottom: 16px; }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero-sub { font-size: 18px; color: rgba(247,245,240,0.9); line-height: 1.6; margin-bottom: 26px; }
+  .btn-col { display: flex; flex-direction: column; gap: 12px; max-width: 420px; }
+  .btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 22px; border-radius: 100px; font-size: 16px; font-weight: 500; text-decoration: none; text-align: center; line-height: 1.3; transition: background 0.2s; }
+  .btn small { display: block; font-size: 13px; font-weight: 400; opacity: 0.85; }
+  .btn-gold { background: var(--gold); color: var(--navy); }
+  .btn-gold:hover { background: #d8bd88; }
+  .btn-ghost { border: 1.5px solid var(--gold); color: var(--gold); }
+  .btn-ghost:hover { background: rgba(200,169,110,0.1); }
+  .btn-navy { background: var(--navy); color: var(--cream); }
+  .btn-navy:hover { background: #1b2c5c; }
+  .hero-fine { margin-top: 16px; font-size: 14px; color: rgba(247,245,240,0.7); }
+  .hero-shot { margin: 0; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
+  .hero-shot img { display: block; width: 100%; height: auto; }
+  .hero-shot figcaption { font-size: 14px; color: var(--body); padding: 10px 14px; line-height: 1.45; }
+  .hero-shot figcaption strong { color: var(--navy); font-weight: 500; }
+
+  /* ---------- LAYOUT ---------- */
+  .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+  section { padding: 56px 0; scroll-margin-top: 60px; }
+  section + section { border-top: 1px solid var(--line); }
+  .section-label { font-size: 12px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-text); margin-bottom: 12px; }
+  h2 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 4vw, 36px); font-weight: 400; line-height: 1.2; color: var(--navy); margin-bottom: 18px; }
+  h2 em { font-style: italic; color: var(--gold-text); }
+  h3 { font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400; color: var(--navy); margin-bottom: 8px; line-height: 1.3; }
+  p { font-size: 16px; color: var(--body); line-height: 1.7; margin-bottom: 14px; }
+
+  /* ---------- OBJECTIONS ---------- */
+  .qa { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .qa-card { background: #fff; border: 1px solid var(--line); border-top: 3px solid var(--gold); border-radius: 0 0 12px 12px; padding: 20px; }
+  .qa-q { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--navy); line-height: 1.25; margin-bottom: 8px; }
+  .qa-a { font-size: 15.5px; color: var(--body); line-height: 1.6; margin: 0; }
+
+  /* ---------- QUOTE ---------- */
+  .quote { margin-top: 24px; background: var(--navy); color: var(--cream); border-radius: 14px; padding: 26px 28px; }
+  .quote p { color: var(--cream); font-size: 18px; font-style: italic; margin-bottom: 8px; }
+  .quote span { color: var(--gold); font-size: 14px; }
+
+  /* ---------- DECISION ---------- */
+  .decision { display: grid; gap: 12px; margin: 8px 0; }
+  .decision-row { display: grid; grid-template-columns: 1fr 28px 1fr; align-items: center; background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--navy); border-radius: 0 12px 12px 0; padding: 16px 20px; gap: 12px; }
+  .decision-row.warm { border-left-color: var(--gold); }
+  .decision-row.tut { border-left-color: #8a8f9c; }
+  .d-if { font-size: 16px; color: var(--body); line-height: 1.5; }
+  .d-if strong { color: var(--navy); font-weight: 500; }
+  .d-arrow { color: var(--gold-text); font-size: 20px; text-align: center; }
+  .d-then { font-family: 'DM Serif Display', serif; font-size: 21px; color: var(--navy); line-height: 1.25; }
+
+  /* ---------- LISTS / CARDS ---------- */
+  .bullets { list-style: none; margin: 12px 0 8px; }
+  .bullets li { position: relative; padding: 7px 0 7px 22px; font-size: 16px; color: var(--body); line-height: 1.55; }
+  .bullets li::before { content: ''; position: absolute; left: 0; top: 16px; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+  .bullets strong { color: var(--navy); font-weight: 500; }
+  .out-list { list-style: none; display: grid; gap: 10px; margin: 16px 0 4px; }
+  .out-list li { background: var(--cream); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 15.5px; color: var(--body); line-height: 1.6; }
+  .out-list strong { display: block; color: var(--navy); font-weight: 500; }
+  .labels { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .lbl { font-size: 12.5px; font-weight: 500; border-radius: 100px; padding: 3px 10px; background: var(--sand); color: #4a3a1a; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 18px 0; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .card h4 { font-family: 'DM Serif Display', serif; font-size: 19px; font-weight: 400; color: var(--navy); margin-bottom: 4px; line-height: 1.3; }
+  .card p { font-size: 15px; margin: 0; line-height: 1.55; }
+  .big { font-family: 'DM Serif Display', serif; font-size: 34px; color: var(--gold-text); line-height: 1; margin-bottom: 8px; }
+  .note { background: var(--sand); border-radius: 10px; padding: 14px 18px; font-size: 15px; color: #4a3a1a; line-height: 1.6; }
+  .note strong { color: var(--navy); font-weight: 500; }
+  figure.shot { margin: 18px 0; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  figure.shot img { display: block; width: 100%; height: auto; }
+  figure.shot figcaption { font-size: 14px; color: var(--muted); padding: 10px 14px; border-top: 1px solid var(--line); line-height: 1.5; }
+  figure.shot figcaption strong { color: var(--navy); font-weight: 500; }
+
+  .steps { list-style: none; counter-reset: s; margin: 14px 0; }
+  .steps li { counter-increment: s; position: relative; padding: 11px 0 11px 46px; font-size: 16px; color: var(--body); border-bottom: 1px dashed var(--line); line-height: 1.6; }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before { content: counter(s); position: absolute; left: 0; top: 10px; width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: var(--gold); font-family: 'DM Serif Display', serif; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+  .steps strong { color: var(--navy); font-weight: 500; }
+  .steps em { font-style: normal; font-size: 15px; color: var(--muted); display: block; margin-top: 2px; }
+
+  /* ---------- EXPANDERS ---------- */
+  details.more { background: #fff; border: 1px solid var(--line); border-radius: 12px; margin-top: 16px; }
+  details.more > summary { list-style: none; cursor: pointer; padding: 16px 20px; font-weight: 500; font-size: 16px; color: var(--navy); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  details.more > summary::-webkit-details-marker { display: none; }
+  details.more > summary::after { content: '+'; font-size: 22px; color: var(--gold-text); line-height: 1; }
+  details.more[open] > summary::after { content: '–'; }
+  details.more .more-body { padding: 0 20px 20px; }
+  dl dt { font-weight: 500; color: var(--navy); font-size: 15.5px; margin-top: 10px; }
+  dl dd { font-size: 15.5px; color: var(--body); line-height: 1.55; }
+
+  /* ---------- TEASER / HELP ---------- */
+  .teaser { display: flex; justify-content: space-between; align-items: center; gap: 20px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 24px 26px; text-decoration: none; }
+  .teaser:hover { border-color: var(--gold); }
+  .teaser h3 { margin-bottom: 4px; }
+  .teaser p { margin: 0; font-size: 15.5px; }
+  .teaser-arrow { font-size: 24px; color: var(--gold-text); }
+  .help { background: var(--navy); border-radius: 16px; padding: 36px; color: var(--cream); }
+  .help h2 { color: var(--cream); }
+  .help h2 em { color: var(--gold); }
+  .help p { color: rgba(247,245,240,0.88); }
+  .help .steps li { color: rgba(247,245,240,0.92); border-color: rgba(247,245,240,0.14); }
+  .help .steps li::before { background: var(--gold); color: var(--navy); }
+  .help .steps strong { color: var(--cream); }
+  .help-fine { font-size: 14px; color: rgba(247,245,240,0.7); margin-top: 14px; }
+
+  footer { background: var(--navy); padding: 36px 32px; text-align: center; color: rgba(247,245,240,0.7); font-size: 14px; }
+  footer a { color: var(--gold); text-decoration: none; }
+
+  @media (max-width: 860px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 28px; }
+    .qa { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    body, p, .bullets li, .steps li, .d-if, .qa-a, .out-list li, .card p { font-size: 17px; }
+    .site-nav-inner { padding: 10px 16px; gap: 6px; flex-direction: column; }
+    .site-nav-links { justify-content: center; gap: 16px; }
+    .site-nav-links a { font-size: 13.5px; }
+    .hero { padding: 36px 0 40px; }
+    .hero-inner { padding: 0 16px; }
+    .hero-sub { font-size: 18px; }
+    .btn-col { max-width: none; }
+    .container { padding: 0 16px; }
+    section { padding: 40px 0; }
+    .decision-row { grid-template-columns: 1fr; gap: 2px; }
+    .d-arrow { text-align: left; }
+    .help { padding: 28px 20px; border-radius: 12px; }
+    .teaser { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="index.html" class="site-brand">Austin <em>Lee</em></a>
+    <ul class="site-nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="staar.html" class="current">STAAR Analyzer</a></li>
+      <li><a href="data-dialogue.html">Data to Dialogue</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ============ ABOVE THE FOLD ============ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="session-chip">ESC Region 11 · Oct 16, 2026</span>
+      <h1>STAAR Analyzer:<br>from export to <em>Monday's plan.</em></h1>
+      <p class="hero-sub">A free Google Sheets tool. Import your Eduphoria STAAR export, and every teacher gets a tab showing what to reteach, who to pull, and who's close to the next level.</p>
+      <div class="btn-col">
+        <!-- REPLACE: put the "anyone with the link" Google Drive folder URL from your PERSONAL account here -->
+        <a href="https://drive.google.com/file/d/1GKjza39jLXm6YgPJxYDMRT8oSo7FFkYo/view?usp=sharing" class="btn btn-gold"><span>Get the free tool →<small>7 script files, demo data, and guides</small></span></a>
+        <a href="#help" class="btn btn-ghost">Book a free 20-min setup call</a>
+      </div>
+      <p class="hero-fine">Free to use. Runs only inside your district's own Google account.</p>
+    </div>
+    <!-- Hero visual: a CROPPED teacher tab from the synthetic demo (Abernathy, Math 6, period 3). Hides itself if the file is missing. -->
+    <figure class="hero-shot">
+      <img src="staar-abernathy.png" alt="A demo teacher tab: TEKS ranked worst-first for period 3, with 6.3.C at the top" onerror="this.closest('figure').style.display='none'">
+      <figcaption><strong>A real teacher tab, invented students.</strong> 6.3.C is low in period 3 only, so the move is a warm-up for that class.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <!-- ============ 3 OBJECTIONS ============ -->
+    <section>
+      <p class="section-label">The three questions districts ask first</p>
+      <div class="qa">
+        <div class="qa-card">
+          <p class="qa-q">Is student data safe?</p>
+          <p class="qa-a">It runs only inside your district's own Google Sheet. It can reach only that one sheet, and it sends nothing anywhere.</p>
+        </div>
+        <div class="qa-card">
+          <p class="qa-q">Are the numbers right?</p>
+          <p class="qa-a">Every run, a Data_Check tab compares its scores with Eduphoria's own Raw Score for every student.</p>
+        </div>
+        <div class="qa-card">
+          <p class="qa-q">How much work is it?</p>
+          <p class="qa-a">About 20 minutes to set up once. Each run takes 2–4 minutes for a typical campus.</p>
+        </div>
+      </div>
+
+      <!-- QUOTE-START  (To show the quote: fill it in, then delete this whole line and the QUOTE-END line below.)
+      <div class="quote">
+        <p>"PASTE THE QUOTE HERE."</p>
+        <span>— Name or role, Midlothian ISD</span>
+      </div>
+      QUOTE-END -->
+    </section>
+
+    <!-- ============ THE DECISION ============ -->
+    <section>
+      <p class="section-label">What a teacher does with it</p>
+      <h2>Three patterns.<br><em>Three moves.</em></h2>
+      <div class="decision">
+        <div class="decision-row">
+          <div class="d-if">A TEK is low in <strong>every</strong> period</div>
+          <div class="d-arrow">→</div>
+          <div class="d-then">Reteach the whole class</div>
+        </div>
+        <div class="decision-row warm">
+          <div class="d-if">A TEK is low in <strong>one</strong> period only</div>
+          <div class="d-arrow">→</div>
+          <div class="d-then">A warm-up for that period</div>
+        </div>
+        <div class="decision-row tut">
+          <div class="d-if">Students are <strong>a few points</strong> from a cut score</div>
+          <div class="d-arrow">→</div>
+          <div class="d-then">Tutorials</div>
+        </div>
+      </div>
+
+      <figure class="shot">
+        <img src="staar-villarreal.png" alt="A demo teacher tab where one TEK is marked URGENT RETEACH in every period" onerror="this.closest('figure').style.display='none'">
+        <figcaption><strong>Low in every period → reteach.</strong> Demo teacher "Villarreal," Math 6: 6.4.B is URGENT RETEACH in all three periods. All names and scores are invented.</figcaption>
+      </figure>
+
+      <h3 style="margin-top: 28px;">On every teacher's tab, by class period</h3>
+      <ul class="bullets">
+        <li><strong>TEKS ranked worst-first</strong>, with a priority label</li>
+        <li><strong>Pull groups</strong> with the exact questions each student missed</li>
+        <li><strong>On the Edge:</strong> students within 15 points of a cut score</li>
+        <li><strong>Last year, same students:</strong> how they did on the standard this one grows from</li>
+        <li><strong>Class over time:</strong> every STAAR since 3rd grade</li>
+      </ul>
+
+      <details class="more">
+        <summary>See every feature and the tests it reads</summary>
+        <div class="more-body">
+          <ul class="out-list">
+            <li><strong>TEKS table</strong>TEA's wording, Readiness or Supporting, the questions that tested it, and four columns: this period, your other periods, all other students, and a state comparison.
+              <span class="labels"><span class="lbl">URGENT RETEACH</span><span class="lbl">Strategic Reteach</span><span class="lbl">The Bubble</span><span class="lbl">Solid Mastery</span><span class="lbl">Commend &amp; Extend</span></span>
+            </li>
+            <li><strong>Last year, same students</strong>Uses TEA's vertical alignment. Example: "6.5.G 64% → 27%, −37% (22 students)." Math and Reading.</li>
+            <li><strong>Pull groups</strong>For the five weakest TEKS. Split into "this is their only gap" and "this isn't their only gap," with SpEd, EB, and ED flags.</li>
+            <li><strong>Reporting categories in plain words</strong>"Weakest in this period → warm-up" or "low across your periods → reteach."</li>
+            <li><strong>Support groups</strong>Each student group compared with its own class and with the same group elsewhere.</li>
+            <li><strong>Class over time</strong>Six bands (Low/High Did Not Meet, Low/High Approaches, Meets, Masters). Spanish years are marked.</li>
+            <li><strong>Growth into this test</strong>Last year's growth points for the students this teacher is receiving.</li>
+            <li><strong>Links</strong>Released tests and teaching resources for that grade and subject.</li>
+          </ul>
+          <div class="grid">
+            <div class="card"><h4>Grades 3–8</h4><p>Math, Reading/RLA, Science, Social Studies</p></div>
+            <div class="card"><h4>End of course</h4><p>Algebra I, English I, English II, Biology, U.S. History</p></div>
+            <div class="card"><h4>Spanish STAAR, 3–5</h4><p>Spanish and English versions combined automatically</p></div>
+          </div>
+          <p class="note" style="margin:0;">The state comparison is that year's published figure where one exists, otherwise a multi-year average. The tab says which.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ============ FOR LEADERS ============ -->
+    <section>
+      <p class="section-label">For coaches &amp; campus leaders</p>
+      <h2>Growth, and proof<br><em>the numbers are right.</em></h2>
+      <ul class="bullets">
+        <li><strong>Growth_Matrix:</strong> TEA's 6-by-6 School Progress table for Reading and Math, with the students behind every number. It follows TEA's method; it can differ slightly from TEA's official numbers because TEA excludes some score codes.</li>
+        <li><strong>Growth_Students:</strong> every student behind every growth number. Admin only.</li>
+        <li><strong>Data_Check:</strong> PASS or CHECK on scoring, performance levels, TEK coverage, and the roster, with the rows named. Open it first.</li>
+      </ul>
+      <details class="more">
+        <summary>See the growth table and Data_Check</summary>
+        <div class="more-body">
+          <figure class="shot">
+            <img src="staar-growth-matrix.png" alt="The 6-by-6 growth table from the synthetic demo workbook" onerror="this.closest('figure').style.display='none'">
+            <figcaption>The 6-by-6 growth table, built from synthetic data.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="staar-data-check.png" alt="The Data_Check tab listing PASS and CHECK results" onerror="this.closest('figure').style.display='none'">
+            <figcaption>Data_Check: the tool checking its own work against Eduphoria.</figcaption>
+          </figure>
+        </div>
+      </details>
+    </section>
+
+    <!-- ============ PROOF ============ -->
+    <section>
+      <p class="section-label">How it was checked</p>
+      <h2>Built with AI.<br><em>Verified</em> against the source.</h2>
+      <p>I built it with an AI coding assistant (Claude Code). I decided what teachers need and checked every rule against TEA's published documents.</p>
+      <div class="grid">
+        <div class="card"><div class="big">43,200</div><h4>answer cells scored as expected</h4><p>Every STAAR test, grade 3 through U.S. History, English and Spanish.</p></div>
+        <div class="card"><div class="big">16</div><h4>automated test suites</h4><p>Run against the real script files.</p></div>
+        <div class="card"><div class="big">~98 sec</div><h4>on a 600-student demo</h4><p>First run, start to finish.</p></div>
+      </div>
+    </section>
+
+    <!-- ============ SETUP ============ -->
+    <section id="setup">
+      <p class="section-label">Setup</p>
+      <h2>About <em>20 minutes,</em> once.</h2>
+      <p>Paste 2 script files into a blank Google Sheet, import your Eduphoria export, and run it twice.</p>
+      <div class="grid">
+        <div class="card"><h4>7 script files</h4><p>Ready to paste into Apps Script.</p></div>
+        <div class="card"><h4>Demo workbook</h4><p>600 invented students, grades 6–8. Try it before your own data.</p></div>
+        <div class="card"><h4>Quick Start + Setup Guide</h4><p>One page, and four pages step by step.</p></div>
+      </div>
+      <!-- REPLACE: same Drive folder link as the hero button -->
+      <a href="https://drive.google.com/file/d/1GKjza39jLXm6YgPJxYDMRT8oSo7FFkYo/view?usp=sharing" class="btn btn-navy" style="max-width:420px;">Get the free tool →</a>
+
+      <details class="more">
+        <summary>See the 7 setup steps</summary>
+        <div class="more-body">
+          <ol class="steps">
+            <li><strong>Make a blank Google Sheet</strong> in your district Google account.</li>
+            <li><strong>Extensions → Apps Script.</strong> Paste in the 7 script files, each named exactly as given, and save.</li>
+            <li><strong>In Eduphoria Aware,</strong> pick up to 7 STAAR tests. Choose <strong>Student Individual Responses</strong>, then <strong>Edit → Columns</strong> and add Current Period, Current Instructor, demographics, and Date Taken. Click the student icon and <strong>Export to Excel</strong>.</li>
+            <li><strong>File → Import</strong> the Excel file into your sheet.<em>Import, don't paste. The tool reads Eduphoria's answer colors.</em></li>
+            <li><strong>STAAR Analyzer → Run Analysis.</strong> Allow access once. The Config tab appears.<em>Google may show an "unverified app" page first. That's expected. A district Google admin can mark the script Trusted to remove it.</em></li>
+            <li><strong>Run Analysis again.</strong> Every teacher has a tab in 2–4 minutes.</li>
+            <li><strong>Open Data_Check first</strong>, then the teacher tabs.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="more">
+        <summary>Privacy details and good-to-know limits</summary>
+        <div class="more-body">
+          <ul class="bullets">
+            <li>No internet calls, no email, and it doesn't touch Drive.</li>
+            <li>Every demo and screenshot uses invented students only.</li>
+            <li>While it was being built, the AI assistant saw code and header rows, never a student row.</li>
+            <li>Google limits each run to 6 minutes on personal accounts and 30 minutes on district accounts.</li>
+            <li>Personal Gmail accounts always show the "unverified app" page.</li>
+            <li>It reads Eduphoria Aware's export layout. Another platform would need the reader adjusted.</li>
+            <li>Your district's own data and AI policy always comes first.</li>
+          </ul>
+          <p class="note" style="margin:8px 0 0;"><strong>AI helper available by request.</strong> A Gemini Gem for setup questions, shared on setup calls, for use only inside a district Google Workspace account.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ============ FULL VERSION TEASER ============ -->
+    <section>
+      <a class="teaser" href="full-version.html">
+        <div>
+          <p class="section-label" style="margin-bottom:6px;">Not in the free download</p>
+          <h3>The full district version</h3>
+          <p>STAAR plus NWEA MAP and district tests (DCBs, CFAs, BOY/MOY/EOY) in one workbook.</p>
+        </div>
+        <span class="teaser-arrow">→</span>
+      </a>
+    </section>
+
+    <!-- ============ HELP ============ -->
+    <section id="help">
+      <div class="help">
+        <p class="section-label" style="color:var(--gold);">Free setup help</p>
+        <h2>Book a free <em>20-minute call.</em></h2>
+        <ol class="steps">
+          <li><strong>Email me</strong> your district, your role, and which tests you want to run.</li>
+          <li><strong>I reply</strong> with a few times.</li>
+          <li><strong>We run it together</strong> on the demo data, then check your export's header row.</li>
+        </ol>
+        <a class="btn btn-gold" style="max-width:420px;" href="mailto:austin.lee.edu@gmail.com?subject=STAAR%20Analyzer%20setup%20call&amp;body=District%3A%20%0ARole%3A%20%0AWhich%20tests%20(subjects%20and%20years)%3A%20%0AA%20few%20times%20that%20work%20for%20a%2020-minute%20call%3A%20%0A">Email me to book a call →</a>
+        <p class="help-fine">austin.lee.edu@gmail.com · No cost, no sales pitch.</p>
+      </div>
+
+      <details class="more">
+        <summary>New to Texas assessment terms? Glossary</summary>
+        <div class="more-body">
+          <dl>
+            <dt>STAAR</dt><dd>The Texas state test.</dd>
+            <dt>EOC</dt><dd>End-of-course STAAR: Algebra I, English I, English II, Biology, U.S. History.</dd>
+            <dt>TEKS</dt><dd>Texas standards. 6.4.B means grade 6, knowledge statement 4, student expectation B.</dd>
+            <dt>Readiness / Supporting</dt><dd>TEA's emphasis label for each tested standard.</dd>
+            <dt>Reporting category</dt><dd>TEA's groups of standards on each test.</dd>
+            <dt>Performance bands</dt><dd>Did Not Meet, Approaches, Meets, Masters. The tool splits the lower two into Low and High.</dd>
+            <dt>School Progress, Part A</dt><dd>TEA's growth measure: each student's move from last year's band earns 0, 0.5, or 1 point.</dd>
+            <dt>Eduphoria Aware</dt><dd>The assessment platform the data comes from.</dd>
+            <dt>PLC</dt><dd>Professional learning community: teacher teams who meet over data.</dd>
+          </dl>
+        </div>
+      </details>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <p>Austin Lee · CTE Teacher, Midlothian ISD · M.Ed. Educational Leadership · TCEA AI Educator certified</p>
+  <p style="margin-top: 8px;"><a href="index.html">Home</a> · <a href="data-dialogue.html">Data to Dialogue</a> (the student-feedback tool) · <a href="contact.html">Contact</a></p>
+</footer>
+
+</body>
+</html>

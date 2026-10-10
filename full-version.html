@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STAAR Analyzer: Full District Version | Austin Lee</title>
+<meta name="description" content="The full district version of the STAAR Analyzer: STAAR, NWEA MAP, and district tests in one workbook for every teacher.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1c3f; --gold: #c8a96e; --gold-text: #86602a; --cream: #f7f5f0;
+    --sand: #f0ece4; --line: #e4e0d8; --ink: #1a1a2e; --body: #3a3a4a; --muted: #666666;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; color: var(--ink); background: var(--cream); line-height: 1.7; font-size: 16px; }
+  html { scroll-behavior: smooth; }
+
+  /* ---------- SITE NAV (shared) ---------- */
+  .site-nav { position: sticky; top: 0; z-index: 100; background: rgba(15,28,63,0.98); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(200,169,110,0.15); }
+  .site-nav-inner { max-width: 1080px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .site-brand { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--cream); text-decoration: none; letter-spacing: 0.02em; white-space: nowrap; }
+  .site-brand em { font-style: italic; color: var(--gold); }
+  .site-nav-links { display: flex; gap: 24px; list-style: none; flex-wrap: wrap; justify-content: flex-end; }
+  .site-nav-links a { color: rgba(247,245,240,0.8); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.04em; }
+  .site-nav-links a:hover, .site-nav-links a.current { color: var(--gold); }
+
+  /* ---------- HERO ---------- */
+  .hero { background: var(--navy); color: var(--cream); padding: 56px 0 56px; }
+  .hero-inner { max-width: 1080px; margin: 0 auto; padding: 0 32px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+  .session-chip { display: inline-block; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(200,169,110,0.45); border-radius: 100px; padding: 6px 14px; margin-bottom: 20px; }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(36px, 5.2vw, 54px); font-weight: 400; line-height: 1.08; margin-bottom: 16px; }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero-sub { font-size: 18px; color: rgba(247,245,240,0.9); line-height: 1.6; margin-bottom: 26px; }
+  .btn-col { display: flex; flex-direction: column; gap: 12px; max-width: 420px; }
+  .btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 22px; border-radius: 100px; font-size: 16px; font-weight: 500; text-decoration: none; text-align: center; line-height: 1.3; transition: background 0.2s; }
+  .btn small { display: block; font-size: 13px; font-weight: 400; opacity: 0.85; }
+  .btn-gold { background: var(--gold); color: var(--navy); }
+  .btn-gold:hover { background: #d8bd88; }
+  .btn-ghost { border: 1.5px solid var(--gold); color: var(--gold); }
+  .btn-ghost:hover { background: rgba(200,169,110,0.1); }
+  .btn-navy { background: var(--navy); color: var(--cream); }
+  .btn-navy:hover { background: #1b2c5c; }
+  .hero-fine { margin-top: 16px; font-size: 14px; color: rgba(247,245,240,0.7); }
+  .hero-shot { margin: 0; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
+  .hero-shot img { display: block; width: 100%; height: auto; }
+  .hero-shot figcaption { font-size: 14px; color: var(--body); padding: 10px 14px; line-height: 1.45; }
+  .hero-shot figcaption strong { color: var(--navy); font-weight: 500; }
+
+  /* ---------- LAYOUT ---------- */
+  .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+  section { padding: 56px 0; scroll-margin-top: 60px; }
+  section + section { border-top: 1px solid var(--line); }
+  .section-label { font-size: 12px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-text); margin-bottom: 12px; }
+  h2 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 4vw, 36px); font-weight: 400; line-height: 1.2; color: var(--navy); margin-bottom: 18px; }
+  h2 em { font-style: italic; color: var(--gold-text); }
+  h3 { font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400; color: var(--navy); margin-bottom: 8px; line-height: 1.3; }
+  p { font-size: 16px; color: var(--body); line-height: 1.7; margin-bottom: 14px; }
+
+  /* ---------- OBJECTIONS ---------- */
+  .qa { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .qa-card { background: #fff; border: 1px solid var(--line); border-top: 3px solid var(--gold); border-radius: 0 0 12px 12px; padding: 20px; }
+  .qa-q { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--navy); line-height: 1.25; margin-bottom: 8px; }
+  .qa-a { font-size: 15.5px; color: var(--body); line-height: 1.6; margin: 0; }
+
+  /* ---------- QUOTE ---------- */
+  .quote { margin-top: 24px; background: var(--navy); color: var(--cream); border-radius: 14px; padding: 26px 28px; }
+  .quote p { color: var(--cream); font-size: 18px; font-style: italic; margin-bottom: 8px; }
+  .quote span { color: var(--gold); font-size: 14px; }
+
+  /* ---------- DECISION ---------- */
+  .decision { display: grid; gap: 12px; margin: 8px 0; }
+  .decision-row { display: grid; grid-template-columns: 1fr 28px 1fr; align-items: center; background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--navy); border-radius: 0 12px 12px 0; padding: 16px 20px; gap: 12px; }
+  .decision-row.warm { border-left-color: var(--gold); }
+  .decision-row.tut { border-left-color: #8a8f9c; }
+  .d-if { font-size: 16px; color: var(--body); line-height: 1.5; }
+  .d-if strong { color: var(--navy); font-weight: 500; }
+  .d-arrow { color: var(--gold-text); font-size: 20px; text-align: center; }
+  .d-then { font-family: 'DM Serif Display', serif; font-size: 21px; color: var(--navy); line-height: 1.25; }
+
+  /* ---------- LISTS / CARDS ---------- */
+  .bullets { list-style: none; margin: 12px 0 8px; }
+  .bullets li { position: relative; padding: 7px 0 7px 22px; font-size: 16px; color: var(--body); line-height: 1.55; }
+  .bullets li::before { content: ''; position: absolute; left: 0; top: 16px; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+  .bullets strong { color: var(--navy); font-weight: 500; }
+  .out-list { list-style: none; display: grid; gap: 10px; margin: 16px 0 4px; }
+  .out-list li { background: var(--cream); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 15.5px; color: var(--body); line-height: 1.6; }
+  .out-list strong { display: block; color: var(--navy); font-weight: 500; }
+  .labels { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .lbl { font-size: 12.5px; font-weight: 500; border-radius: 100px; padding: 3px 10px; background: var(--sand); color: #4a3a1a; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 18px 0; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .card h4 { font-family: 'DM Serif Display', serif; font-size: 19px; font-weight: 400; color: var(--navy); margin-bottom: 4px; line-height: 1.3; }
+  .card p { font-size: 15px; margin: 0; line-height: 1.55; }
+  .big { font-family: 'DM Serif Display', serif; font-size: 34px; color: var(--gold-text); line-height: 1; margin-bottom: 8px; }
+  .note { background: var(--sand); border-radius: 10px; padding: 14px 18px; font-size: 15px; color: #4a3a1a; line-height: 1.6; }
+  .note strong { color: var(--navy); font-weight: 500; }
+  figure.shot { margin: 18px 0; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  figure.shot img { display: block; width: 100%; height: auto; }
+  figure.shot figcaption { font-size: 14px; color: var(--muted); padding: 10px 14px; border-top: 1px solid var(--line); line-height: 1.5; }
+  figure.shot figcaption strong { color: var(--navy); font-weight: 500; }
+
+  .steps { list-style: none; counter-reset: s; margin: 14px 0; }
+  .steps li { counter-increment: s; position: relative; padding: 11px 0 11px 46px; font-size: 16px; color: var(--body); border-bottom: 1px dashed var(--line); line-height: 1.6; }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before { content: counter(s); position: absolute; left: 0; top: 10px; width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: var(--gold); font-family: 'DM Serif Display', serif; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+  .steps strong { color: var(--navy); font-weight: 500; }
+  .steps em { font-style: normal; font-size: 15px; color: var(--muted); display: block; margin-top: 2px; }
+
+  /* ---------- EXPANDERS ---------- */
+  details.more { background: #fff; border: 1px solid var(--line); border-radius: 12px; margin-top: 16px; }
+  details.more > summary { list-style: none; cursor: pointer; padding: 16px 20px; font-weight: 500; font-size: 16px; color: var(--navy); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  details.more > summary::-webkit-details-marker { display: none; }
+  details.more > summary::after { content: '+'; font-size: 22px; color: var(--gold-text); line-height: 1; }
+  details.more[open] > summary::after { content: '–'; }
+  details.more .more-body { padding: 0 20px 20px; }
+  dl dt { font-weight: 500; color: var(--navy); font-size: 15.5px; margin-top: 10px; }
+  dl dd { font-size: 15.5px; color: var(--body); line-height: 1.55; }
+
+  /* ---------- TEASER / HELP ---------- */
+  .teaser { display: flex; justify-content: space-between; align-items: center; gap: 20px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 24px 26px; text-decoration: none; }
+  .teaser:hover { border-color: var(--gold); }
+  .teaser h3 { margin-bottom: 4px; }
+  .teaser p { margin: 0; font-size: 15.5px; }
+  .teaser-arrow { font-size: 24px; color: var(--gold-text); }
+  .help { background: var(--navy); border-radius: 16px; padding: 36px; color: var(--cream); }
+  .help h2 { color: var(--cream); }
+  .help h2 em { color: var(--gold); }
+  .help p { color: rgba(247,245,240,0.88); }
+  .help .steps li { color: rgba(247,245,240,0.92); border-color: rgba(247,245,240,0.14); }
+  .help .steps li::before { background: var(--gold); color: var(--navy); }
+  .help .steps strong { color: var(--cream); }
+  .help-fine { font-size: 14px; color: rgba(247,245,240,0.7); margin-top: 14px; }
+
+  footer { background: var(--navy); padding: 36px 32px; text-align: center; color: rgba(247,245,240,0.7); font-size: 14px; }
+  footer a { color: var(--gold); text-decoration: none; }
+
+  @media (max-width: 860px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 28px; }
+    .qa { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    body, p, .bullets li, .steps li, .d-if, .qa-a, .out-list li, .card p { font-size: 17px; }
+    .site-nav-inner { padding: 10px 16px; gap: 6px; flex-direction: column; }
+    .site-nav-links { justify-content: center; gap: 16px; }
+    .site-nav-links a { font-size: 13.5px; }
+    .hero { padding: 36px 0 40px; }
+    .hero-inner { padding: 0 16px; }
+    .hero-sub { font-size: 18px; }
+    .btn-col { max-width: none; }
+    .container { padding: 0 16px; }
+    section { padding: 40px 0; }
+    .decision-row { grid-template-columns: 1fr; gap: 2px; }
+    .d-arrow { text-align: left; }
+    .help { padding: 28px 20px; border-radius: 12px; }
+    .teaser { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="index.html" class="site-brand">Austin <em>Lee</em></a>
+    <ul class="site-nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="staar.html" class="current">STAAR Analyzer</a></li>
+      <li><a href="data-dialogue.html">Data to Dialogue</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner" style="grid-template-columns:1fr;">
+    <div>
+      <span class="session-chip">Not in the free download</span>
+      <h1>The full district version:<br><em>every test, one workbook.</em></h1>
+      <p class="hero-sub">The free version reads STAAR only. My own district build adds NWEA MAP and district tests, so each teacher sees every assessment in one place.</p>
+      <div class="btn-col">
+        <a class="btn btn-gold" href="mailto:austin.lee.edu@gmail.com?subject=STAAR%20Analyzer%20full%20district%20version&amp;body=District%3A%20%0ARole%3A%20%0AAssessments%20you%20use%20(MAP%2C%20DCBs%2C%20CFAs%2C%20BOY%2FMOY%2FEOY)%3A%20%0AA%20few%20times%20that%20work%20for%20a%2020-minute%20call%3A%20%0A">Email me to talk about it →</a>
+        <a class="btn btn-ghost" href="staar.html">Start with the free STAAR version</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <section>
+      <p class="section-label">What it adds</p>
+      <div class="grid">
+        <div class="card"><h4>NWEA MAP</h4><p>MAP compared with last May's STAAR, fall to fall, and across the summer, by student group. Each teacher's students on NWEA's five labels for every goal area.</p></div>
+        <div class="card"><h4>District tests</h4><p>DCBs, unit tests, CFAs, BOY/MOY/EOY. Teacher tabs built from the newest district test, plus a block for running test corrections.</p></div>
+        <div class="card"><h4>One workbook</h4><p>STAAR back to 3rd grade, MAP terms, and district tests side by side on each student's "class over time" strip.</p></div>
+      </div>
+      <p class="note"><strong>Proof it works:</strong> on a synthetic showcase workbook (132 students, 6 teachers, every subject), scoring matched Eduphoria on all 26 tests and 3,117 records.</p>
+    </section>
+    <section>
+      <p class="section-label">Why it takes more setup</p>
+      <p>Every district exports MAP and its own tests differently, so the full version is set up for each district. It's in daily use in my own district and still growing.</p>
+      <p>If your district wants this, email me and we'll talk through what you use and what it would take.</p>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <p>Austin Lee · CTE Teacher, Midlothian ISD · M.Ed. Educational Leadership · TCEA AI Educator certified</p>
+  <p style="margin-top: 8px;"><a href="index.html">Home</a> · <a href="staar.html">STAAR Analyzer</a> · <a href="contact.html">Contact</a></p>
+</footer>
+
+</body>
+</html>
